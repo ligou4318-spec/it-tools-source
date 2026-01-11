@@ -1,0 +1,17 @@
+# Cloudflare Pages configuration
+name = "toolsapplab"
+compatibility_date = "2024-01-01"
+
+[env.production]
+routes = [
+  { pattern = "toolsapplab.com/*", zone_name = "toolsapplab.com" }
+]
+
+[build]
+command = "pnpm build"
+cwd = "."
+watch_paths = ["src/**", "locales/**", "public/**"]
+
+[build.environment]
+NODE_VERSION = "22"
+PNPM_VERSION = "9.11.0"
