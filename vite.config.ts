@@ -118,28 +118,75 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log'],
+        pure_funcs: ['console.log', 'console.info'],
+        // Additional optimizations
+        dead_code: true,
+        conditionals: true,
+        evaluate: true,
+        side_effects: true,
+      },
+      format: {
+        comments: false,
       },
     },
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: (id) => {
           // Vendor chunks for better caching
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'naive-ui': ['naive-ui'],
-          'editor': ['monaco-editor'],
-          'utils': ['lodash', 'date-fns', 'colord'],
+          if (id.includes('node_modules')) {
+            // Vue ecosystem
+            if (id.includes('vue') || id.includes('pinia') || id.includes('@vueuse')) {
+              return 'vue-vendor';
+            }
+            // Naive UI - split into smaller chunks
+            if (id.includes('naive-ui')) {
+              return 'naive-ui';
+            }
+            // Monaco Editor - lazy loaded chunk
+            if (id.includes('monaco-editor')) {
+              return 'editor';
+            }
+            // Utility libraries
+            if (id.includes('lodash') || id.includes('date-fns') || id.includes('colord')) {
+              return 'utils';
+            }
+            // Markdown and text processing
+            if (id.includes('markdown-it') || id.includes('marked') || id.includes('dompurify')) {
+              return 'markdown';
+            }
+            // Crypto and security libraries
+            if (id.includes('crypto') || id.includes('bcrypt') || id.includes('node-forge')) {
+              return 'crypto';
+            }
+            // QR code and image libraries
+            if (id.includes('qrcode') || id.includes('sharp')) {
+              return 'images';
+            }
+            // Other vendor code
+            return 'vendor';
+          }
         },
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
+      // Optimize Rollup performance
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        unknownGlobalSideEffects: false,
+      },
     },
-    // Optimize chunk size
-    chunkSizeWarningLimit: 1000,
+    // Optimize chunk size - increased for better code splitting
+    chunkSizeWarningLimit: 600,
     // Enable source code transformation
     sourcemap: false,
+    // CSS code splitting
+    cssCodeSplit: true,
+    // Enable build optimizations
+    reportCompressedSize: false,
+    maxParallelFileOps: 8,
   },
   // Optimize dependencies pre-bundling
   optimizeDeps: {
@@ -149,7 +196,11 @@ export default defineConfig({
       'pinia',
       'naive-ui',
       '@vueuse/core',
+      'date-fns',
+      'colord',
     ],
+    // Exclude large dependencies from pre-bundling
+    exclude: ['monaco-editor'],
   },
   // Server configuration
   server: {

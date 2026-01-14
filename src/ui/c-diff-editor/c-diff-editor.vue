@@ -1,36 +1,53 @@
 <script setup lang="ts">
-import * as monaco from 'monaco-editor';
 import { useStyleStore } from '@/stores/style.store';
 
-const props = withDefaults(defineProps<{ options?: monaco.editor.IDiffEditorOptions }>(), { options: () => ({}) });
+type MonacoEditor = typeof import('monaco-editor');
+type DiffEditor = import('monaco-editor').editor.IStandaloneDiffEditor;
+type DiffEditorOptions = import('monaco-editor').editor.IDiffEditorOptions;
+
+const props = withDefaults(defineProps<{ options?: DiffEditorOptions }>(), { options: () => ({}) });
 const { options } = toRefs(props);
 
 const editorContainer = ref<HTMLElement | null>(null);
-let editor: monaco.editor.IStandaloneDiffEditor | null = null;
+let editor: DiffEditor | null = null;
+let monaco: MonacoEditor | null = null;
 
-monaco.editor.defineTheme('it-tools-dark', {
-  base: 'vs-dark',
-  inherit: true,
-  rules: [],
-  colors: {
-    'editor.background': '#00000000',
-  },
-});
+// Lazy load Monaco Editor
+const loadMonaco = async () => {
+  if (!monaco) {
+    monaco = await import('monaco-editor');
 
-monaco.editor.defineTheme('it-tools-light', {
-  base: 'vs',
-  inherit: true,
-  rules: [],
-  colors: {
-    'editor.background': '#00000000',
-  },
-});
+    // Define themes only once
+    monaco.editor.defineTheme('it-tools-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#00000000',
+      },
+    });
+
+    monaco.editor.defineTheme('it-tools-light', {
+      base: 'vs',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#00000000',
+      },
+    });
+  }
+  return monaco;
+};
 
 const styleStore = useStyleStore();
 
 watch(
   () => styleStore.isDarkTheme,
-  isDarkTheme => monaco.editor.setTheme(isDarkTheme ? 'it-tools-dark' : 'it-tools-light'),
+  async (isDarkTheme) => {
+    if (monaco) {
+      monaco.editor.setTheme(isDarkTheme ? 'it-tools-dark' : 'it-tools-light');
+    }
+  },
   { immediate: true },
 );
 
@@ -44,12 +61,14 @@ useResizeObserver(editorContainer, () => {
   editor?.layout();
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (!editorContainer.value) {
     return;
   }
 
-  editor = monaco.editor.createDiffEditor(editorContainer.value, {
+  const monacoInstance = await loadMonaco();
+
+  editor = monacoInstance.editor.createDiffEditor(editorContainer.value, {
     originalEditable: true,
     minimap: {
       enabled: false,
@@ -57,9 +76,20 @@ onMounted(() => {
   });
 
   editor.setModel({
-    original: monaco.editor.createModel('original text', 'txt'),
-    modified: monaco.editor.createModel('modified text', 'txt'),
+    original: monacoInstance.editor.createModel('original text', 'txt'),
+    modified: monacoInstance.editor.createModel('modified text', 'txt'),
   });
+
+  // Set initial theme
+  monacoInstance.editor.setTheme(styleStore.isDarkTheme ? 'it-tools-dark' : 'it-tools-light');
+});
+
+// Cleanup on unmount
+onUnmounted(() => {
+  if (editor) {
+    editor.dispose();
+    editor = null;
+  }
 });
 </script>
 
