@@ -17,7 +17,7 @@ const showCommandPalette = ref(false);
 const quickAccessTools = [
   {
     name: 'JSON Formatter',
-    path: '/json-viewer',
+    path: '/json-prettify',
     icon: IconBraces,
     description: 'Format & validate JSON',
     shortcut: '1',
@@ -31,7 +31,7 @@ const quickAccessTools = [
   },
   {
     name: 'Timestamp',
-    path: '/date-time-converter',
+    path: '/date-converter',
     icon: IconClock,
     description: 'Unix timestamp converter',
     shortcut: '3',

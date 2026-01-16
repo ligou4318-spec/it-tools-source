@@ -126,16 +126,16 @@ tools:
     description: Hash and compare text string using bcrypt. Bcrypt is a password-hashing function based on the Blowfish cipher.
 
   crontab-generator:
-    title: Crontab generator
-    description: Validate and generate crontab and get the human-readable description of the cron schedule.
+    title: Cron Generator & Validator
+    description: Generate, validate, and explain cron expressions. Human-readable cron schedule descriptions. Free, instant, privacy-first.
 
   http-status-codes:
-    title: HTTP status codes
-    description: The list of all HTTP status codes, their name, and their meaning.
+    title: HTTP Status Codes Reference
+    description: Complete HTTP status code reference. Quick lookup for 200, 404, 500, etc. Developer-friendly, instant access.
 
   sql-prettify:
-    title: SQL prettify and format
-    description: Format and prettify your SQL queries online (it supports various SQL dialects).
+    title: SQL Formatter & Beautifier
+    description: Format and beautify SQL queries instantly. Supports MySQL, PostgreSQL, SQL Server, Oracle. Free, offline, no tracking.
 
   benchmark-builder:
     title: Benchmark builder
@@ -186,8 +186,8 @@ tools:
     description: This tool can process column-based data and apply various changes (transpose, add prefix and suffix, reverse list, sort list, lowercase values, truncate values) to each row.
 
   base64-string-converter:
-    title: Base64 string encoder/decoder
-    description: Simply encode and decode strings into their base64 representation.
+    title: Base64 Encoder/Decoder
+    description: Encode and decode Base64 strings instantly. Fast, free, privacy-first. Works offline in your browser.
 
   toml-to-yaml:
     title: TOML to YAML
@@ -226,8 +226,8 @@ tools:
     description: Escape or unescape HTML entities (replace characters like <,>, &, " and \' with their HTML version)
 
   json-prettify:
-    title: JSON prettify and format
-    description: Prettify your JSON string into a friendly, human-readable format.
+    title: JSON Formatter & Validator
+    description: Format, validate, and beautify JSON data instantly. Syntax highlighting, error detection, minify support. Free, offline, no tracking.
 
   docker-run-to-docker-compose-converter:
     title: Docker run to Docker compose converter
@@ -250,8 +250,8 @@ tools:
     description: Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content
 
   qrcode-generator:
-    title: QR Code generator
-    description: Generate and download a QR code for a URL (or just plain text), and customize the background and foreground colors.
+    title: QR Code Generator
+    description: Generate QR codes instantly. Customizable colors, sizes, error correction. Free, unlimited, works offline. Privacy-first.
 
   wifi-qrcode-generator:
     title: WiFi QR Code generator
@@ -290,12 +290,12 @@ tools:
     description: Compare two JSON objects and get the differences between them.
 
   jwt-parser:
-    title: JWT parser
-    description: Parse and decode your JSON Web Token (jwt) and display its content.
+    title: JWT Decoder
+    description: Decode and verify JSON Web Tokens instantly. View header, payload, signature. Debug JWT locally. Free, no tracking, works offline.
 
   date-converter:
-    title: Date-time converter
-    description: Convert date and time into the various different formats
+    title: Timestamp Converter
+    description: Convert Unix timestamps to human-readable dates. Epoch converter, timezone support. Instant, free, privacy-first, offline.
 
   phone-parser-and-formatter:
     title: Phone parser and formatter
@@ -350,8 +350,8 @@ tools:
     description: Simply convert YAML to JSON with this online live converter.
 
   uuid-generator:
-    title: UUIDs generator
-    description: A Universally Unique Identifier (UUID) is a 128-bit number used to identify information in computer systems. The number of possible UUIDs is 16^32, which is 2^128 or about 3.4x10^38 (which is a lot!).
+    title: UUID Generator
+    description: Generate UUID/GUID v4 instantly. Bulk generation, copy to clipboard. Free, random, offline, privacy-first.
 
   ipv4-address-converter:
     title: IPv4 address converter

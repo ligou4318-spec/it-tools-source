@@ -16,7 +16,7 @@
       "name": "JSON Formatter",
       "short_name": "JSON",
       "description": "Format and validate JSON data",
-      "url": "/json-viewer?utm_source=pwa",
+      "url": "/json-prettify?utm_source=pwa",
       "icons": [{"src": "/favicon-96x96.png", "sizes": "96x96"}]
     },
     {
@@ -30,7 +30,7 @@
       "name": "Timestamp Converter",
       "short_name": "Timestamp",
       "description": "Convert Unix timestamps to human-readable dates",
-      "url": "/date-time-converter?utm_source=pwa",
+      "url": "/date-converter?utm_source=pwa",
       "icons": [{"src": "/favicon-96x96.png", "sizes": "96x96"}]
     }
   ],
