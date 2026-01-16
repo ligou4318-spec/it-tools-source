@@ -36,7 +36,7 @@ hljs.registerLanguage('markdown', markdownHljs);
 const { value, language, followHeightOf, copyPlacement, copyMessage } = toRefs(props);
 const { height } = followHeightOf.value ? useElementSize(followHeightOf) : { height: ref(null) };
 
-const { copy, isJustCopied } = useCopy({ source: value, createToast: false });
+const { copy, isJustCopied } = useCopy({ source: value, createToast: true, text: '✓ Copied to clipboard!' });
 const tooltipText = computed(() => isJustCopied.value ? 'Copied!' : copyMessage.value);
 </script>
 
@@ -54,8 +54,8 @@ const tooltipText = computed(() => isJustCopied.value ? 'Copied!' : copyMessage.
       </n-scrollbar>
       <div absolute right-10px top-10px>
         <c-tooltip v-if="value" :tooltip="tooltipText" position="left">
-          <c-button circle important:h-10 important:w-10 @click="copy()">
-            <n-icon size="22" :component="Copy" />
+          <c-button circle important:h-12 important:w-12 @click="copy()">
+            <n-icon size="24" :component="Copy" />
           </c-button>
         </c-tooltip>
       </div>

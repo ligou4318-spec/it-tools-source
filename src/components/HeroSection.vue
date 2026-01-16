@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconSearch, IconCommand, IconStar, IconRocket, IconBrandGithub, IconWorld } from '@tabler/icons-vue';
+import { IconSearch, IconCommand, IconStar, IconRocket, IconBrandGithub, IconWorld, IconBraces, IconTransform, IconClock } from '@tabler/icons-vue';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -13,8 +13,44 @@ const searchQuery = ref('');
 const isSearchFocused = ref(false);
 const showCommandPalette = ref(false);
 
+// Quick access tools - most commonly used by US developers
+const quickAccessTools = [
+  {
+    name: 'JSON Formatter',
+    path: '/json-viewer',
+    icon: IconBraces,
+    description: 'Format & validate JSON',
+    shortcut: '1',
+  },
+  {
+    name: 'Base64',
+    path: '/base64-string-converter',
+    icon: IconTransform,
+    description: 'Encode & decode Base64',
+    shortcut: '2',
+  },
+  {
+    name: 'Timestamp',
+    path: '/date-time-converter',
+    icon: IconClock,
+    description: 'Unix timestamp converter',
+    shortcut: '3',
+  },
+];
+
 // Keyboard shortcut ⌘K / Ctrl+K
 function handleKeydown(e: KeyboardEvent) {
+  // Quick access shortcuts (Alt+1/2/3 for accessibility)
+  if (e.altKey && ['1', '2', '3'].includes(e.key)) {
+    const index = parseInt(e.key) - 1;
+    if (quickAccessTools[index]) {
+      e.preventDefault();
+      router.push(quickAccessTools[index].path);
+      return;
+    }
+  }
+
+  // Command palette shortcut
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
     e.preventDefault();
     showCommandPalette.value = !showCommandPalette.value;
@@ -26,6 +62,16 @@ function handleKeydown(e: KeyboardEvent) {
     }
   }
   if (e.key === 'Escape' && showCommandPalette.value) {
+    showCommandPalette.value = false;
+  }
+}
+
+function navigateToTool(toolOrPath: any) {
+  if (typeof toolOrPath === 'string') {
+    router.push(toolOrPath);
+  } else if (toolOrPath?.path) {
+    router.push(`/${toolOrPath.path}`);
+    searchQuery.value = '';
     showCommandPalette.value = false;
   }
 }
@@ -53,14 +99,6 @@ const filteredTools = computed(() => {
   }).slice(0, 8);
 });
 
-function navigateToTool(tool: any) {
-  if (tool.path) {
-    router.push(`/${tool.path}`);
-  }
-  searchQuery.value = '';
-  showCommandPalette.value = false;
-}
-
 function handleExplore() {
   window.scrollTo({ top: 500, behavior: 'smooth' });
 }
@@ -86,10 +124,24 @@ function goToGitHub() {
 
       <!-- Subtitle -->
       <p class="sv-desc">
-        All-in-one suite for modern engineers. Local-first, zero tracking, and built for
-        <span class="highlight">developers worldwide</span>. From JSON formatting to cron jobs,
-        get it all here.
+        <span class="highlight">100+ privacy-first developer tools, runs locally in your browser.</span>
       </p>
+
+      <!-- Quick Access Buttons - For developers who need fast access -->
+      <div class="sv-quick-access">
+        <button
+          v-for="tool in quickAccessTools"
+          :key="tool.path"
+          class="sv-quick-btn"
+          @click="navigateToTool(tool.path)"
+          :aria-label="`Open ${tool.name} - ${tool.description}. Press Alt + ${tool.shortcut}`"
+          :title="`${tool.name} - ${tool.description} (Alt+${tool.shortcut})`"
+        >
+          <component :is="tool.icon" :size="20" />
+          <span>{{ tool.name }}</span>
+          <kbd class="sv-kbd">Alt+{{ tool.shortcut }}</kbd>
+        </button>
+      </div>
 
       <!-- Search Box - GitHub Style -->
       <div class="sv-search-box" :class="{ 'sv-search-focused': isSearchFocused || showCommandPalette }">
@@ -248,20 +300,93 @@ function goToGitHub() {
 }
 
 .sv-desc {
-  font-size: 1.125rem;
-  color: var(--sv-muted);
-  line-height: 1.7;
-  margin-bottom: 45px;
-  max-width: 700px;
+  font-size: 1.25rem;
+  color: var(--sv-text);
+  line-height: 1.6;
+  margin-bottom: 30px;
+  max-width: 750px;
   margin-left: auto;
   margin-right: auto;
-  font-weight: 400;
+  font-weight: 500;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   animation: fadeInUp 0.6s ease-out 0.4s both;
 
   .highlight {
     color: var(--sv-accent);
+    font-weight: 600;
+  }
+}
+
+// Quick Access Buttons - Large touch targets for accessibility
+.sv-quick-access {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease-out 0.5s both;
+}
+
+.sv-quick-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  min-height: 56px; // WCAG AAA minimum touch target
+  min-width: 200px;
+  background: var(--sv-card);
+  border: 2px solid var(--sv-border);
+  border-radius: 12px;
+  color: var(--sv-text);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  // Focus styles for accessibility
+  &:focus-visible {
+    outline: 3px solid var(--sv-accent);
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    background: var(--sv-bg-secondary);
+    border-color: var(--sv-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // Icon styling
+  > :first-child {
+    color: var(--sv-accent);
+    flex-shrink: 0;
+  }
+
+  // Text
+  span {
+    flex: 1;
+    text-align: left;
+  }
+
+  // Keyboard shortcut badge
+  .sv-kbd {
+    background: var(--sv-bg);
+    border: 1px solid var(--sv-border);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--sv-muted);
     font-weight: 500;
+    flex-shrink: 0;
   }
 }
 
@@ -601,7 +726,30 @@ function goToGitHub() {
   }
 
   .sv-desc {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+  }
+
+  // Quick access buttons on mobile
+  .sv-quick-access {
+    flex-direction: column;
+    width: 100%;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 12px;
+  }
+
+  .sv-quick-btn {
+    width: 100%;
+    min-width: unset;
+    padding: 18px 20px;
+    font-size: 15px;
+    min-height: 60px; // Even larger on mobile for easy tapping
+
+    .sv-kbd {
+      display: none; // Hide shortcuts on mobile
+    }
   }
 
   .sv-search-box {
@@ -646,8 +794,18 @@ function goToGitHub() {
     padding: 4px 12px;
   }
 
+  .sv-desc {
+    font-size: 1rem;
+  }
+
   .sv-command-item {
     padding: 10px;
+  }
+
+  // Extra large buttons on small screens
+  .sv-quick-btn {
+    min-height: 64px;
+    font-size: 16px;
   }
 }
 </style>

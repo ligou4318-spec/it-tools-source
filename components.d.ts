@@ -111,6 +111,7 @@ declare module '@vue/runtime-core' {
     IconMdiRecord: typeof import('~icons/mdi/record')['default']
     IconMdiRefresh: typeof import('~icons/mdi/refresh')['default']
     IconMdiSearch: typeof import('~icons/mdi/search')['default']
+    IconMdiShieldCheck: typeof import('~icons/mdi/shield-check')['default']
     IconMdiTranslate: typeof import('~icons/mdi/translate')['default']
     IconMdiTriangleDown: typeof import('~icons/mdi/triangle-down')['default']
     IconMdiVideo: typeof import('~icons/mdi/video')['default']

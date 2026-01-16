@@ -6,7 +6,7 @@ const props = defineProps<{ value: string }>();
 const emit = defineEmits(['update:value']);
 
 const value = useVModel(props, 'value', emit);
-const { copy, isJustCopied } = useCopy({ source: value, createToast: false });
+const { copy, isJustCopied } = useCopy({ source: value, createToast: true, text: '✓ Copied!' });
 const tooltipText = computed(() => isJustCopied.value ? 'Copied!' : 'Copy to clipboard');
 </script>
 
@@ -14,7 +14,7 @@ const tooltipText = computed(() => isJustCopied.value ? 'Copied!' : 'Copy to cli
   <c-input-text v-model:value="value">
     <template #suffix>
       <c-tooltip :tooltip="tooltipText">
-        <c-button circle variant="text" size="small" @click="copy()">
+        <c-button circle variant="text" size="medium" @click="copy()">
           <icon-mdi-content-copy />
         </c-button>
       </c-tooltip>

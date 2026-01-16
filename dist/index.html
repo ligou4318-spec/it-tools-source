@@ -51,6 +51,9 @@
     <meta name="googlebot" content="index, follow" />
     <meta name="theme-color" content="#0a0a0a" />
 
+    <!-- Content Security Policy - Prevents plugin injection -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
+
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
@@ -90,16 +93,9 @@
 
     <!-- Alternative Language Links -->
     <link rel="alternate" hreflang="en" href="https://toolsapplab.com/" />
-    <link rel="alternate" hreflang="de" href="https://toolsapplab.com/de/" />
-    <link rel="alternate" hreflang="fr" href="https://toolsapplab.com/fr/" />
-    <link rel="alternate" hreflang="es" href="https://toolsapplab.com/es/" />
     <link rel="alternate" hreflang="x-default" href="https://toolsapplab.com/" />
-
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script type="module" crossorigin src="/assets/js/index-20e68ebe.js"></script>
-    <link rel="stylesheet" href="/assets/css/index-ad9b37ed.css">
+    <script type="module" crossorigin src="/assets/js/index-c0cd2988.js"></script>
+    <link rel="stylesheet" href="/assets/css/index-3e68b95a.css">
   <link rel="manifest" href="/manifest.webmanifest"></head>
   <body>
     <div id="app"></div>

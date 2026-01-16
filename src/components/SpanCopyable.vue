@@ -6,7 +6,7 @@ const { value } = toRefs(props);
 
 const initialText = 'Copy to clipboard';
 
-const { copy, isJustCopied } = useCopy({ source: value, createToast: false });
+const { copy, isJustCopied } = useCopy({ source: value, createToast: true, text: '✓ Copied!' });
 const tooltipText = computed(() => isJustCopied.value ? 'Copied!' : initialText);
 </script>
 

@@ -4,6 +4,10 @@ import { NGlobalStyle, NMessageProvider, NNotificationProvider, darkTheme } from
 import { darkThemeOverrides, lightThemeOverrides } from './themes';
 import { layouts } from './layouts';
 import { useStyleStore } from './stores/style.store';
+import { useMetaTags } from './composable/useMetaTags';
+
+// Initialize dynamic meta tags for SEO
+useMetaTags();
 
 const route = useRoute();
 const layout = computed(() => route?.meta?.layout ?? layouts.base);
@@ -48,5 +52,23 @@ html {
 
 * {
   box-sizing: border-box;
+}
+
+/* Mobile-friendly input styles */
+@media (max-width: 768px) {
+  input,
+  textarea {
+    min-height: 48px !important;
+    font-size: 16px !important; /* Prevents iOS auto-zoom */
+  }
+
+  textarea {
+    min-height: 120px !important;
+  }
+
+  button {
+    min-height: 44px !important; /* Apple's recommended minimum touch target */
+    min-width: 44px !important;
+  }
 }
 </style>

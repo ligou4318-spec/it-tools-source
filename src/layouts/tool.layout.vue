@@ -49,6 +49,15 @@ const toolDescription = computed<string>(() => t(`tools.${i18nKey.value}.descrip
         <div class="description">
           {{ toolDescription }}
         </div>
+
+        <div class="trust-badge">
+          <n-tag :bordered="false" size="small" type="success">
+            <template #icon>
+              <icon-mdi-shield-check />
+            </template>
+            🔒 100% Local Processing • No Server Upload
+          </n-tag>
+        </div>
       </div>
     </div>
 
@@ -102,6 +111,10 @@ const toolDescription = computed<string>(() => t(`tools.${i18nKey.value}.descrip
       margin: 0;
 
       opacity: 0.7;
+    }
+
+    .trust-badge {
+      margin-top: 12px;
     }
   }
 }
