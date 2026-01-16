@@ -1,16 +1,91 @@
+# ============================================================
+# Cache Rules for toolsapplab.com - First Principles
+# Mission: 1-2s First Paint for US Developers
+# ============================================================
+
+# ------------------------------------------------------------
+# Root - NO CACHE (prevents stale HTML core issue)
+# ------------------------------------------------------------
 /
   Cache-Control: no-cache, no-store, must-revalidate
   Pragma: no-cache
   Expires: 0
 
+# ------------------------------------------------------------
+# HTML Entry - NO CACHE
+# ------------------------------------------------------------
 /index.html
   Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
 
-/manifest.webmanifest
-  Cache-Control: no-cache
+# All HTML files (safety net)
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
 
-/service-worker.js
-  Cache-Control: no-cache
-
+# ------------------------------------------------------------
+# Static Assets in /assets/ - LONG CACHE (speed optimization)
+# ------------------------------------------------------------
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Root level JS/CSS
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# ------------------------------------------------------------
+# PWA Resources - MEDIUM CACHE
+# ------------------------------------------------------------
+/manifest.webmanifest
+  Cache-Control: public, max-age=604800
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Icons and images - LONG CACHE
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+/*.ico
+  Cache-Control: public, max-age=604800, immutable
+/*.webmanifest
+  Cache-Control: public, max-age=604800
+
+# Fonts - LONG CACHE
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+# XML and config files - SHORT CACHE
+/*.xml
+  Cache-Control: public, max-age=86400
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+# ------------------------------------------------------------
+# Security Headers (applies to all routes)
+# ------------------------------------------------------------
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+
+# ------------------------------------------------------------
+# SEO & AI Crawlers
+# ------------------------------------------------------------
+/*
+  X-Robots-Tag: all

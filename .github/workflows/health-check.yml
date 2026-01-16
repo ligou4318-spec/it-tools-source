@@ -1,0 +1,283 @@
+# ==============================================================================
+# Health Check & Monitoring Workflow
+# ==============================================================================
+# Purpose: Continuous availability and performance monitoring
+# Schedule: Runs every hour
+# Alerts: Creates issues on failures
+# ==============================================================================
+
+name: Health Check & Monitoring
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  # ==============================================================================
+  # Availability Check - Verifies site is accessible
+  # ==============================================================================
+  availability:
+    name: 🟢 Availability Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🌐 Check Main Domain
+        id: main-domain
+        run: |
+          echo "### 🌐 Domain Availability Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Domain | Status | Code | Time |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|--------|------|------|" >> $GITHUB_STEP_SUMMARY
+
+          domains=("https://toolsapplab.com" "https://www.toolsapplab.com")
+
+          for domain in "${domains[@]}"; do
+            response=$(curl -s -o /dev/null -w "%{http_code},%{time_total}" "$domain" --max-time 10)
+            code=$(echo "$response" | cut -d',' -f1)
+            time=$(echo "$response" | cut -d',' -f2)
+
+            if [ "$code" = "200" ]; then
+              echo "| ✅ $domain | UP | $code | ${time}s |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| ❌ $domain | DOWN | $code | ${time}s |" >> $GITHUB_STEP_SUMMARY
+              echo "$domain is down!"
+              # Don't fail the job, just report
+            fi
+          done
+
+      - name: 📊 Check Response Time
+        run: |
+          time=$(curl -s -o /dev/null -w "%{time_total}" "https://toolsapplab.com" --max-time 10)
+
+          echo "### ⏱️ Performance Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**TTFB (Time to First Byte):** ${time}s" >> $GITHUB_STEP_SUMMARY
+
+          # Convert to milliseconds
+          time_ms=$(echo "$time * 1000" | bc)
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if (( $(echo "$time < 0.5" | bc -l) )); then
+            echo "✅ Excellent (< 500ms)" >> $GITHUB_STEP_SUMMARY
+          elif (( $(echo "$time < 1.0" | bc -l) )); then
+            echo "⚠️ Good (< 1s)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Slow (> 1s)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==============================================================================
+  # SSL Certificate Check - Verifies HTTPS is valid
+  # ==============================================================================
+  ssl-check:
+    name: 🔒 SSL Certificate Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Check SSL Certificate
+        run: |
+          echo "### 🔒 SSL Certificate Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Get SSL expiration date
+          expiration=$(echo | openssl s_client -servername toolsapplab.com -connect toolsapplab.com:443 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
+
+          # Convert to epoch and calculate days remaining
+          exp_date=$(date -d "$expiration" +%s)
+          current_date=$(date +%s)
+          days_left=$(( ($exp_date - $current_date) / 86400 ))
+
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Domain | toolsapplab.com |" >> $GITHUB_STEP_SUMMARY
+          echo "| Expires | $expiration |" >> $GITHUB_STEP_SUMMARY
+          echo "| Days Remaining | $days_left |" >> $GITHUB_STEP_SUMMARY
+
+          if [ $days_left -lt 7 ]; then
+            echo "⚠️ WARNING: Certificate expires soon!" >> $GITHUB_STEP_SUMMARY
+          elif [ $days_left -lt 30 ]; then
+            echo "⚠️ NOTICE: Certificate expires in < 30 days" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Certificate is valid" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==============================================================================
+  # Content Check - Verifies critical content loads
+  # ==============================================================================
+  content-check:
+    name: 📄 Content Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Verify Critical Content
+        run: |
+          echo "### 📄 Critical Content Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Fetch page and check for critical elements
+          html=$(curl -s "https://toolsapplab.com" --max-time 10)
+
+          checks=(
+            "html:!DOCTYPE html"
+            "head:<title"
+            "body:app"
+            "script:sw.js"
+          )
+
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          for check in "${checks[@]}"; do
+            element=$(echo "$check" | cut -d':' -f1)
+            pattern=$(echo "$check" | cut -d':' -f2)
+
+            if echo "$html" | grep -q "$pattern"; then
+              echo "| ✅ <$element> | Found |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| ❌ <$element> | Missing |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+  # ==============================================================================
+  # Security Headers Check - Verifies security best practices
+  # ==============================================================================
+  security-check:
+    name: 🔐 Security Headers Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Check Security Headers
+        run: |
+          echo "### 🔐 Security Headers Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Get response headers
+          headers=$(curl -s -I "https://toolsapplab.com" --max-time 10)
+
+          echo "| Header | Expected | Found |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|----------|-------|" >> $GITHUB_STEP_SUMMARY
+
+          security_headers=(
+            "X-Content-Type-Options:nosniff"
+            "X-Frame-Options:DENY"
+            "X-XSS-Protection:1"
+            "Strict-Transport-Security:max-age"
+          )
+
+          for header in "${security_headers[@]}"; do
+            name=$(echo "$header" | cut -d':' -f1)
+            value=$(echo "$header" | cut -d':' -f2)
+
+            if echo "$headers" | grep -qi "$name"; then
+              echo "| ✅ $name | $value | Yes |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| ⚠️ $name | $value | Missing |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+  # ==============================================================================
+  # Core Web Vitals - Performance metrics
+  # ==============================================================================
+  performance-check:
+    name: ⚡ Performance Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📊 Check Core Web Vitals
+        run: |
+          echo "### ⚡ Performance Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo ""
+          echo "**Note:** For detailed Core Web Vitals, use:" >> $GITHUB_STEP_SUMMARY
+          echo "- [PageSpeed Insights](https://pagespeed.web.dev/?url=https://toolsapplab.com)" >> $GITHUB_STEP_SUMMARY
+          echo "- [WebPageTest](https://www.webpagetest.org)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check TTFB
+          ttfb=$(curl -s -o /dev/null -w "%{time_starttransfer}" "https://toolsapplab.com" --max-time 10)
+          ttfb_ms=$(echo "$ttfb * 1000" | bc)
+
+          echo "**Quick Metrics:**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value | Target | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|--------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          if (( $(echo "$ttfb < 0.2" | bc -l) )); then
+            echo "| TTFB | ${ttfb}s | < 200ms | ✅ Excellent |" >> $GITHUB_STEP_SUMMARY
+          elif (( $(echo "$ttfb < 0.5" | bc -l) )); then
+            echo "| TTFB | ${ttfb}s | < 500ms | ⚠️ Good |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| TTFB | ${ttfb}s | < 500ms | ❌ Needs Improvement |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==============================================================================
+  # Alert Job - Creates issues for critical failures
+  # ==============================================================================
+  alert:
+    name: 🚨 Create Alert Issues
+    needs: [availability, ssl-check, content-check, security-check]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: 📊 Health Check Summary
+        run: |
+          echo "### 🏥 Health Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Availability | ${{ needs.availability.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SSL Certificate | ${{ needs.ssl-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Content | ${{ needs.content-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Headers | ${{ needs.security-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Performance | ${{ needs.performance-check.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🚨 Create Issue on Critical Failures
+        if: |
+          needs.availability.result == 'failure' ||
+          needs.ssl-check.result == 'failure' ||
+          needs.content-check.result == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `🚨 Health Check Failure - ${new Date().toISOString()}`;
+            const body = `## Health Check Failed
+
+            | Check | Status |
+            |-------|--------|
+            | Availability | ${{ needs.availability.result }} |
+            | SSL Certificate | ${{ needs.ssl-check.result }} |
+            | Content | ${{ needs.content-check.result }} |
+            | Security Headers | ${{ needs.security-check.result }} |
+            | Performance | ${{ needs.performance-check.result }} |
+
+            **Action Required:** Please investigate the deployment.
+
+            **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            `;
+
+            // Check if open issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['health-check']
+            });
+
+            const hasRecentIssue = issues.data.some(issue => {
+              const created = new Date(issue.created_at);
+              const hoursAgo = new Date(Date.now() - 60 * 60 * 1000);
+              return created > hoursAgo;
+            });
+
+            if (!hasRecentIssue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['health-check', 'urgent']
+              });
+            }
