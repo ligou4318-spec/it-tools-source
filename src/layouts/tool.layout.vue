@@ -2,10 +2,14 @@
 import { useRoute } from 'vue-router';
 import { useHead } from '@vueuse/head';
 import type { HeadObject } from '@vueuse/head';
+import { onMounted, watch } from 'vue';
 
 import BaseLayout from './base.layout.vue';
 import FavoriteButton from '@/components/FavoriteButton.vue';
+import ToolSuggestions from '@/components/ToolSuggestions.vue';
+import SocialShare from '@/components/SocialShare.vue';
 import type { Tool } from '@/tools/tools.types';
+import { useToolSuggestions } from '@/composable/useToolSuggestions';
 
 const route = useRoute();
 
@@ -28,6 +32,48 @@ const { t } = useI18n();
 const i18nKey = computed<string>(() => route.path.trim().replace('/', ''));
 const toolTitle = computed<string>(() => t(`tools.${i18nKey.value}.title`, String(route.meta.name)));
 const toolDescription = computed<string>(() => t(`tools.${i18nKey.value}.description`, String(route.meta.description)));
+
+// Lollapalooza Effect: Tool Suggestions (查理芒格)
+const { suggestions, analyzeContent, clearSuggestions } = useToolSuggestions();
+
+// Watch for input changes in tool components and suggest related tools
+// This is the network effect that makes tools work better together
+const setupSuggestions = () => {
+  // Observe textarea and input elements
+  const observer = new MutationObserver(() => {
+    const inputs = document.querySelectorAll('textarea, input[type="text"]');
+    inputs.forEach(input => {
+      if (!input.dataset.suggestionSetup) {
+        input.dataset.suggestionSetup = 'true';
+
+        input.addEventListener('input', (e) => {
+          const target = e.target as HTMLTextAreaElement | HTMLInputElement;
+          const content = target.value;
+
+          if (content.length > 3) {
+            analyzeContent(content, route.path);
+          } else {
+            clearSuggestions();
+          }
+        });
+      }
+    });
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Cleanup on unmount
+  onMounted(() => {
+    setTimeout(() => {
+      observer.disconnect();
+    }, 5000);
+  });
+};
+
+// Initialize suggestions when tool changes
+watch(() => route.path, () => {
+  setTimeout(setupSuggestions, 100);
+}, { immediate: true });
 </script>
 
 <template>
@@ -55,9 +101,15 @@ const toolDescription = computed<string>(() => t(`tools.${i18nKey.value}.descrip
             <template #icon>
               <icon-mdi-shield-check />
             </template>
-            🔒 100% Local Processing • No Server Upload
+            🔒 Data never leaves your browser
           </n-tag>
         </div>
+
+        <!-- Lollapalooza Effect: Tool Suggestions (芒格：1+1>2) -->
+        <ToolSuggestions :suggestions="suggestions" />
+
+        <!-- Social Proof (欲望都市：社交认同) -->
+        <SocialShare :tool-name="toolTitle" :tool-path="route.path" />
       </div>
     </div>
 

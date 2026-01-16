@@ -215,6 +215,15 @@ function goToGitHub() {
           <span>Hacker News</span>
         </div>
       </div>
+
+      <!-- Privacy Trust Badge (段永平：本分 - 做对的事) -->
+      <div class="sv-privacy-trust">
+        <div class="sv-privacy-icon">🔒</div>
+        <div class="sv-privacy-text">
+          <strong>Data never leaves your browser</strong>
+          <small>All processing happens locally. No servers. No tracking.</small>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -687,6 +696,44 @@ function goToGitHub() {
     &:not(:last-child)::after {
       content: ',';
       color: var(--sv-muted);
+      font-weight: 400;
+    }
+  }
+}
+
+// Privacy Trust Badge (段永平：本分 - 做对的事)
+.sv-privacy-trust {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 12px 20px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 12px;
+  animation: fadeInUp 0.6s ease-out 1.2s both;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  .sv-privacy-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .sv-privacy-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+
+    strong {
+      color: var(--sv-text);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    small {
+      color: var(--sv-muted);
+      font-size: 12px;
       font-weight: 400;
     }
   }
