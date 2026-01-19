@@ -14,32 +14,21 @@
 <body>
     <div id="app"></div>
     <script>
-        // 1. 强制注入环境底座
+        // 核心路径锁定
         window.__BASE_URL__ = "./";
-        window.process = { env: { NODE_ENV: 'production' } };
-
-        // 2. 顺序点火逻辑：确保 vendor 先于 index 执行
-        const scripts = [
-            './assets/js/vendor-4ed993c7.js',
-            './assets/js/vue-vendor-4ed993c7.js',
-            './assets/js/index-72aaa7da.js'
-        ];
-
-        function loadScript(idx) {
-            if (idx >= scripts.length) return;
-            const s = document.createElement('script');
-            s.type = 'module';
-            s.src = scripts[idx];
-            s.onload = () => {
-                console.log(`Module ${idx} ignited.`);
-                loadScript(idx + 1);
-            };
-            s.onerror = () => console.error(`Failed to load: ${scripts[idx]}`);
-            document.body.appendChild(s);
-        }
-
-        // 开始点火
-        window.addEventListener('DOMContentLoaded', () => loadScript(0));
+        
+        // 监控 Vue 挂载：如果 5 秒后 innerHTML 还是空的，说明某个零件丢了
+        setTimeout(() => {
+            const app = document.getElementById('app');
+            if (app && app.innerHTML === "") {
+                console.error("Hydration Timeout: Check network tab for missing .js files");
+                app.innerHTML = "<div style='color:red'>Boot Failure: Script Mismatch</div>";
+            }
+        }, 5000);
     </script>
+    
+    <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
+    <script type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
+    <script type="module" src="./assets/js/index-72aaa7da.js"></script>
 </body>
 </html>
