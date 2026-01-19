@@ -7,21 +7,39 @@
     <title>ToolsApp Lab</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
     <style>
-        body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        #app:empty:before { content: 'Igniting Core Engine...'; font-family: monospace; opacity: 0.5; }
+        body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
+        #app:empty:before { content: 'Igniting Core Engine...'; opacity: 0.5; }
     </style>
 </head>
 <body>
     <div id="app"></div>
-
     <script>
-        // 物理隔离：强制设置根路径，防止 Vue 在内存中迷路
+        // 1. 强制注入环境底座
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: 'production' } };
-    </script>
 
-    <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
-    <script type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
-    <script type="module" src="./assets/js/index-72aaa7da.js"></script>
+        // 2. 顺序点火逻辑：确保 vendor 先于 index 执行
+        const scripts = [
+            './assets/js/vendor-4ed993c7.js',
+            './assets/js/vue-vendor-4ed993c7.js',
+            './assets/js/index-72aaa7da.js'
+        ];
+
+        function loadScript(idx) {
+            if (idx >= scripts.length) return;
+            const s = document.createElement('script');
+            s.type = 'module';
+            s.src = scripts[idx];
+            s.onload = () => {
+                console.log(`Module ${idx} ignited.`);
+                loadScript(idx + 1);
+            };
+            s.onerror = () => console.error(`Failed to load: ${scripts[idx]}`);
+            document.body.appendChild(s);
+        }
+
+        // 开始点火
+        window.addEventListener('DOMContentLoaded', () => loadScript(0));
+    </script>
 </body>
 </html>
