@@ -2,12 +2,15 @@
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  # 禁用 Cloudflare 压缩干扰，确保原始 JS 完整下发
+  X-HTML-Edge-Cache: no-cache
 
 /assets/css/*.css
   Content-Type: text/css
 
 /assets/js/*.js
   Content-Type: application/javascript
+  Access-Control-Allow-Origin: *
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
