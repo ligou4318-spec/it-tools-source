@@ -4,43 +4,21 @@
     <meta charset="UTF-8">
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolsApp Lab | Pro Developer Toolkit</title>
-    
+    <title>ToolsApp Lab | Expert Developer Toolkit</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
-
     <style>
         :root { color-scheme: dark; }
-        body { 
-            background: #0a0a0a !important; 
-            margin: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh; 
-            color: #ffffff; 
-            font-family: system-ui, -apple-system, sans-serif; 
-        }
-        #app:empty:before { 
-            content: 'System Ignition in progress...'; 
-            font-size: 14px; 
-            opacity: 0.3; 
-            letter-spacing: 2px;
-        }
+        body { background: #0a0a0a !important; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #fff; font-family: sans-serif; }
+        #app:empty:before { content: 'Logic Initializing...'; font-size: 14px; opacity: 0.3; letter-spacing: 2px; }
     </style>
 </head>
 <body>
     <div id="app"></div>
 
     <script type="text/javascript">
-        // 3. 环境逻辑修正：强制清空旧配置，锁定当前路径
-        try {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.__BASE_URL__ = "./"; // 强制引导 Vue 引擎寻找本地零件
-        } catch (e) {}
-
-        // 4. 加载状态监听
-        window.onload = () => console.log("Core Engine Ready.");
+        // 第一性原理：重置可能冲突的路径变量
+        window.__BASE_URL__ = "./"; 
+        try { localStorage.clear(); sessionStorage.clear(); } catch (e) {}
     </script>
 
     <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
