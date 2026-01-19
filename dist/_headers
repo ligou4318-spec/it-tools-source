@@ -1,6 +1,18 @@
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
 
+# 第一性原理：强制物理声明文件类型，解除浏览器安全封锁
+
+# 1. 样式表身份证
+/assets/css/*.css
+  Content-Type: text/css
+
+# 2. 脚本身份证
+/assets/js/*.js
+  Content-Type: application/javascript
+
+# 3. 静态资源长期缓存
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
