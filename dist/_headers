@@ -3,7 +3,7 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 
-# 物理强制：对所有请求应用严格的 MIME 类型校准
+# 物理强制：确保所有资源具备合法的“身份证”
 /assets/css/*.css
   Content-Type: text/css
 
