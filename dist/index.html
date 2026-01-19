@@ -4,29 +4,20 @@
     <meta charset="UTF-8">
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolsApp Lab | Production Ready</title>
+    <title>ToolsApp Lab</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
     <style>
-        :root { color-scheme: dark; }
-        body { background: #0a0a0a !important; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #fff; font-family: sans-serif; }
-        #app:empty:before { content: 'Engine Hydrating...'; font-size: 14px; opacity: 0.3; letter-spacing: 2px; }
+        body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        #app:empty:before { content: 'Igniting Core Engine...'; font-family: monospace; opacity: 0.5; }
     </style>
 </head>
 <body>
     <div id="app"></div>
 
     <script>
-        // 第一性原理：强制抹除所有干扰变量
+        // 物理隔离：强制设置根路径，防止 Vue 在内存中迷路
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: 'production' } };
-        try { localStorage.clear(); sessionStorage.clear(); } catch(e) {}
-        
-        // 调试钩子：如果挂载成功，内部 innerHTML 必然改变
-        const observer = new MutationObserver(() => {
-            console.log("Hydration Success: UI Rendered.");
-            observer.disconnect();
-        });
-        observer.observe(document.getElementById('app'), { childList: true });
     </script>
 
     <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
