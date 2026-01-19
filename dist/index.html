@@ -5,28 +5,42 @@
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToolsApp Lab | Pro Developer Toolkit</title>
+    
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
+
     <style>
         :root { color-scheme: dark; }
-        body { background: #0a0a0a !important; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #ffffff; font-family: sans-serif; }
-        #app:empty:before { content: 'System Initializing...'; font-size: 14px; opacity: 0.4; letter-spacing: 2px; }
+        body { 
+            background: #0a0a0a !important; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            color: #ffffff; 
+            font-family: system-ui, -apple-system, sans-serif; 
+        }
+        #app:empty:before { 
+            content: 'System Ignition in progress...'; 
+            font-size: 14px; 
+            opacity: 0.3; 
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
     <div id="app"></div>
 
     <script type="text/javascript">
-        // 1. 物理重置：清除可能导致逻辑崩溃的旧存储
-        try { localStorage.clear(); sessionStorage.clear(); } catch (e) {}
+        // 3. 环境逻辑修正：强制清空旧配置，锁定当前路径
+        try {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.__BASE_URL__ = "./"; // 强制引导 Vue 引擎寻找本地零件
+        } catch (e) {}
 
-        // 2. 逻辑劫持：强制将 Base URL 修正为当前根目录
-        // 这一步是解决 innerHTML 为空的“特效药”
-        window.__BASE_URL__ = "./"; 
-        
-        // 3. 错误监听：如果 3 秒后还没加载出来，强制在控制台输出原因
-        window.addEventListener('error', function(e) {
-            console.error("Critical Failure:", e.message);
-        }, true);
+        // 4. 加载状态监听
+        window.onload = () => console.log("Core Engine Ready.");
     </script>
 
     <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
