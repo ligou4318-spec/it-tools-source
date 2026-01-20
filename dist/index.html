@@ -6,37 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToolsApp Lab</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
-    <style>
-        body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: sans-serif; }
-        #app:empty:before { content: 'System Final Calibration...'; opacity: 0.5; }
-    </style>
-    <link rel="modulepreload" href="./assets/js/vendor-4ed993c7.js">
-    <link rel="modulepreload" href="./assets/js/vue-vendor-4ed993c7.js">
-    <link rel="modulepreload" href="./assets/js/crypto-4ed993c7.js">
-    <link rel="modulepreload" href="./assets/js/utils-4ed993c7.js">
 </head>
 <body>
     <div id="app"></div>
 
-    <script type="text/javascript">
-        // 第一性原理：强制锁定根路径，消除所有路径猜测
+    <script>
+        // 3. 环境底座：只需最基础的一行，防止 Vue 找不到根路径
         window.__BASE_URL__ = "./";
-        window.process = { env: { NODE_ENV: 'production' } };
     </script>
 
     <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
     <script type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
     <script type="module" src="./assets/js/index-72aaa7da.js"></script>
-
-    <script>
-        // 自动监控补丁：如果 3 秒后没动静，强制重新触发 Vue 挂载
-        setTimeout(() => {
-            const app = document.getElementById('app');
-            if (app && app.innerHTML === "") {
-                console.warn("Manual hydration trigger...");
-                window.dispatchEvent(new Event('load'));
-            }
-        }, 3000);
-    </script>
 </body>
 </html>
