@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>IT-Tools</title>
+    <title>IT-Tools | Global</title>
+    <base href="./">
     <link rel="stylesheet" href="./assets/css/index-fd2d99c0.css">
     <script data-cfasync="false">
+        // 2. 环境强行对齐
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: "production" } };
+        // 3. 性能补丁：防止某些浏览器因不支持模块加载而静默退出
+        if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('module')) {
+            console.error("Your browser is too old. Please use Chrome/Safari.");
+        }
     </script>
 </head>
 <body>
@@ -17,16 +23,14 @@
     <script data-cfasync="false" type="module" src="./assets/js/index-72aaa7da.js"></script>
 
     <script data-cfasync="false">
-        // 监控点火状态
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (document.getElementById('app').children.length === 0) {
-                    console.error("Vue failed to mount. Check Network tab for 404s.");
-                } else {
-                    console.log("System Online.");
-                }
-            }, 500);
-        });
+        // 5. 暴力唤醒：如果 Vue 挂载失败，强制触发事件
+        setTimeout(() => {
+            const app = document.getElementById('app');
+            if (app && app.innerHTML === "") {
+                console.warn("Manual ignition triggered...");
+                window.dispatchEvent(new Event('load'));
+            }
+        }, 1000);
     </script>
 </body>
 </html>
