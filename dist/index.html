@@ -4,29 +4,29 @@
     <meta charset="utf-8">
     <title>IT-Tools</title>
     <link rel="stylesheet" href="./assets/css/index-fd2d99c0.css">
+    <script data-cfasync="false">
+        window.__BASE_URL__ = "./";
+        window.process = { env: { NODE_ENV: "production" } };
+    </script>
 </head>
 <body>
     <div id="app"></div>
 
-    <script>
-        window.__BASE_URL__ = "./";
-        window.process = { env: { NODE_ENV: "production" } };
-        // 强制初始化本地配置，防止 Vue 因为找不到配置而崩溃
-        localStorage.setItem('it-tools-locale', 'en');
-    </script>
+    <script data-cfasync="false" type="module" src="./assets/js/vendor-4ed993c7.js"></script>
+    <script data-cfasync="false" type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
+    <script data-cfasync="false" type="module" src="./assets/js/index-72aaa7da.js"></script>
 
-    <script src="./assets/js/vendor-4ed993c7.js" defer></script>
-    <script src="./assets/js/vue-vendor-4ed993c7.js" defer></script>
-    <script src="./assets/js/index-72aaa7da.js" defer></script>
-
-    <script>
-        // 自动兜底逻辑：如果 3 秒后页面还是白的，强制刷新一次
-        setTimeout(() => {
-            if (document.getElementById('app').children.length === 0) {
-                console.warn("Detecting blank page, attempting auto-fix...");
-                window.dispatchEvent(new Event('resize')); // 尝试触发 Vue 的重新渲染
-            }
-        }, 3000);
+    <script data-cfasync="false">
+        // 监控点火状态
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (document.getElementById('app').children.length === 0) {
+                    console.error("Vue failed to mount. Check Network tab for 404s.");
+                } else {
+                    console.log("System Online.");
+                }
+            }, 500);
+        });
     </script>
 </body>
 </html>
