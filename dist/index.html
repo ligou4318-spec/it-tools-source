@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT-Tools | Best Developer Tools</title>
+    <title>IT-Tools Lab | Professional Developer Toolkit</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
     <script>
-        // 第一性原理：强制注入 Vue 引擎启动所需的“最小空气”
+        // 2. 第一性原理：为 Vue 引擎在内存中预设物理坐标
         window.__BASE_URL__ = "./";
-        window.process = { env: { NODE_ENV: 'production' } };
-        // 预设语言，防止因读取不到浏览器偏好而崩溃
+        window.process = { env: { NODE_ENV: "production" } };
+        // IT-Tools 启动锚点：强制注入语言环境，防止因偏好读取失败而白屏
         try { localStorage.setItem('it-tools-locale', 'en'); } catch(e) {}
     </script>
 </head>
 <body>
     <div id="app"></div>
-    
+
     <script type="module" crossorigin src="./assets/js/vendor-4ed993c7.js"></script>
     <script type="module" crossorigin src="./assets/js/vue-vendor-4ed993c7.js"></script>
     <script type="module" crossorigin src="./assets/js/index-72aaa7da.js"></script>
