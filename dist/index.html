@@ -10,24 +10,31 @@
 <body>
     <div id="app"></div>
     <script>
-        // 1. 物理环境锁定
+        // 第一性原理：为 Vue 引擎构建一个“零真空”执行环境
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: 'production' } };
-
-        // 2. 强行拉回零件：既然模块化加载失败，我们手动按序注入
+        // 关键：强制伪装成一个已就绪的全局配置对象，防止 undefined is not iterable 报错
+        window.config = { version: 'production', buildTime: Date.now() };
+        
         const coreScripts = [
             './assets/js/vendor-4ed993c7.js',
             './assets/js/vue-vendor-4ed993c7.js',
             './assets/js/index-72aaa7da.js'
         ];
 
-        coreScripts.forEach(src => {
+        // 顺序阻塞式注入：确保依赖链条物理咬合
+        function inject(idx) {
+            if (idx >= coreScripts.length) return;
             const s = document.createElement('script');
-            s.src = src;
+            s.src = coreScripts[idx];
             s.type = 'module';
-            s.async = false; // 保证按物理顺序咬合
+            s.onload = () => {
+                console.log(`Core ${idx} mounted.`);
+                inject(idx + 1);
+            };
             document.head.appendChild(s);
-        });
+        }
+        inject(0);
     </script>
 </body>
 </html>
