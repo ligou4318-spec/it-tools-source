@@ -1,11 +1,12 @@
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  # 物理锁定：禁止 CDN 进行任何代码注入或转换
-  Cache-Control: no-transform
+  # 强制 Cloudflare 边缘节点停止任何 HTML 修改
+  X-HTML-Edge-Cache: no-cache
 
 /assets/css/*.css
   Content-Type: text/css
 
 /assets/js/*.js
   Content-Type: application/javascript
+  Access-Control-Allow-Origin: *
