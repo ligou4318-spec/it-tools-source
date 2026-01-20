@@ -1,9 +1,6 @@
-/*
-  X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
+/assets/*
   Access-Control-Allow-Origin: *
-  # 允许 ESM 模块跨域加载
-  Timing-Allow-Origin: *
+  X-Content-Type-Options: nosniff
 
 /assets/js/*.js
   Content-Type: application/javascript
