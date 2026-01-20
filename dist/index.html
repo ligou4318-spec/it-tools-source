@@ -7,17 +7,20 @@
     <title>ToolsApp Lab</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
     <style>
-        body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
+        body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: sans-serif; }
         #app:empty:before { content: 'System Final Calibration...'; opacity: 0.5; }
     </style>
+    <link rel="modulepreload" href="./assets/js/vendor-4ed993c7.js">
+    <link rel="modulepreload" href="./assets/js/vue-vendor-4ed993c7.js">
+    <link rel="modulepreload" href="./assets/js/crypto-4ed993c7.js">
+    <link rel="modulepreload" href="./assets/js/utils-4ed993c7.js">
 </head>
 <body>
     <div id="app"></div>
-    <script>
-        // 1. 强制注入生产环境标记，关闭 Vue 调试警告
+
+    <script type="text/javascript">
+        // 第一性原理：强制锁定根路径，消除所有路径猜测
         window.__BASE_URL__ = "./";
-        window.__VUE_OPTIONS_API__ = true;
-        window.__VUE_PROD_DEVTOOLS__ = false;
         window.process = { env: { NODE_ENV: 'production' } };
     </script>
 
@@ -26,13 +29,12 @@
     <script type="module" src="./assets/js/index-72aaa7da.js"></script>
 
     <script>
-        // 3. 容错逻辑：如果 Vue 没能接管 #app，自动尝试二次唤醒
+        // 自动监控补丁：如果 3 秒后没动静，强制重新触发 Vue 挂载
         setTimeout(() => {
             const app = document.getElementById('app');
             if (app && app.innerHTML === "") {
-                console.log("Retrying hydration...");
-                // 强制触发一次窗口缩放事件，有时能唤醒某些挂起的 Vue 渲染逻辑
-                window.dispatchEvent(new Event('resize'));
+                console.warn("Manual hydration trigger...");
+                window.dispatchEvent(new Event('load'));
             }
         }, 3000);
     </script>
