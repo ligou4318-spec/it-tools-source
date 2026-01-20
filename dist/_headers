@@ -1,12 +1,9 @@
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  # 强制 Cloudflare 边缘节点停止任何 HTML 修改
-  X-HTML-Edge-Cache: no-cache
-
-/assets/css/*.css
-  Content-Type: text/css
+  Access-Control-Allow-Origin: *
+  # 允许 ESM 模块跨域加载
+  Timing-Allow-Origin: *
 
 /assets/js/*.js
   Content-Type: application/javascript
-  Access-Control-Allow-Origin: *
