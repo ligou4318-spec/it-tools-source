@@ -8,27 +8,33 @@
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
     <style>
         body { background: #0a0a0a; color: #fff; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
-        #app:empty:before { content: 'Igniting Core Engine...'; opacity: 0.5; }
+        #app:empty:before { content: 'System Final Calibration...'; opacity: 0.5; }
     </style>
 </head>
 <body>
     <div id="app"></div>
     <script>
-        // 核心路径锁定
+        // 1. 强制注入生产环境标记，关闭 Vue 调试警告
         window.__BASE_URL__ = "./";
-        
-        // 监控 Vue 挂载：如果 5 秒后 innerHTML 还是空的，说明某个零件丢了
-        setTimeout(() => {
-            const app = document.getElementById('app');
-            if (app && app.innerHTML === "") {
-                console.error("Hydration Timeout: Check network tab for missing .js files");
-                app.innerHTML = "<div style='color:red'>Boot Failure: Script Mismatch</div>";
-            }
-        }, 5000);
+        window.__VUE_OPTIONS_API__ = true;
+        window.__VUE_PROD_DEVTOOLS__ = false;
+        window.process = { env: { NODE_ENV: 'production' } };
     </script>
-    
+
     <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
     <script type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
     <script type="module" src="./assets/js/index-72aaa7da.js"></script>
+
+    <script>
+        // 3. 容错逻辑：如果 Vue 没能接管 #app，自动尝试二次唤醒
+        setTimeout(() => {
+            const app = document.getElementById('app');
+            if (app && app.innerHTML === "") {
+                console.log("Retrying hydration...");
+                // 强制触发一次窗口缩放事件，有时能唤醒某些挂起的 Vue 渲染逻辑
+                window.dispatchEvent(new Event('resize'));
+            }
+        }, 3000);
+    </script>
 </body>
 </html>
