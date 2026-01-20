@@ -4,40 +4,21 @@
     <meta charset="UTF-8">
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT-Tools Final Ignition</title>
+    <title>IT-Tools | Best Developer Tools</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
     <script>
-        // 1. 物理环境注入
+        // 第一性原理：强制注入 Vue 引擎启动所需的“最小空气”
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: 'production' } };
-        localStorage.setItem('locale', 'en');
-
-        // 2. 暴力点火函数：绕过 type="module" 的环境限制
-        async function forceStart() {
-            const scripts = [
-                './assets/js/vendor-4ed993c7.js',
-                './assets/js/vue-vendor-4ed993c7.js',
-                './assets/js/index-72aaa7da.js'
-            ];
-            
-            for (const src of scripts) {
-                console.log(`Force fetching: ${src}`);
-                const resp = await fetch(src);
-                const code = await resp.text();
-                const script = document.createElement('script');
-                // 关键：利用 Blob 强行转换为可执行的模块
-                const blob = new Blob([code], { type: 'application/javascript' });
-                script.src = URL.createObjectURL(blob);
-                script.type = 'module';
-                document.head.appendChild(script);
-                // 给浏览器 100ms 消化每个零件
-                await new Promise(r => setTimeout(r, 100));
-            }
-        }
-        window.addEventListener('DOMContentLoaded', forceStart);
+        // 预设语言，防止因读取不到浏览器偏好而崩溃
+        try { localStorage.setItem('it-tools-locale', 'en'); } catch(e) {}
     </script>
 </head>
 <body>
     <div id="app"></div>
+    
+    <script type="module" crossorigin src="./assets/js/vendor-4ed993c7.js"></script>
+    <script type="module" crossorigin src="./assets/js/vue-vendor-4ed993c7.js"></script>
+    <script type="module" crossorigin src="./assets/js/index-72aaa7da.js"></script>
 </body>
 </html>
