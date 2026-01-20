@@ -9,13 +9,24 @@
     <div id="app"></div>
 
     <script>
-        // 2. 注入核心底座
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: "production" } };
+        // 强制初始化本地配置，防止 Vue 因为找不到配置而崩溃
+        localStorage.setItem('it-tools-locale', 'en');
     </script>
 
-    <script type="module" crossorigin src="./assets/js/vendor-4ed993c7.js"></script>
-    <script type="module" crossorigin src="./assets/js/vue-vendor-4ed993c7.js"></script>
-    <script type="module" crossorigin src="./assets/js/index-72aaa7da.js"></script>
+    <script src="./assets/js/vendor-4ed993c7.js" defer></script>
+    <script src="./assets/js/vue-vendor-4ed993c7.js" defer></script>
+    <script src="./assets/js/index-72aaa7da.js" defer></script>
+
+    <script>
+        // 自动兜底逻辑：如果 3 秒后页面还是白的，强制刷新一次
+        setTimeout(() => {
+            if (document.getElementById('app').children.length === 0) {
+                console.warn("Detecting blank page, attempting auto-fix...");
+                window.dispatchEvent(new Event('resize')); // 尝试触发 Vue 的重新渲染
+            }
+        }, 3000);
+    </script>
 </body>
 </html>
