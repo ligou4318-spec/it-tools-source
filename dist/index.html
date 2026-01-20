@@ -4,37 +4,31 @@
     <meta charset="UTF-8">
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolsApp Lab</title>
+    <title>IT-Tools Lab</title>
     <link rel="stylesheet" href="./assets/css/index-ad9b37ed.css">
+    <script>
+        // 2. 第一性原理：强制构建引擎所需的最小运行底座
+        window.__BASE_URL__ = "./";
+        window.process = { env: { NODE_ENV: 'production' } };
+        // IT-Tools 专用：强制注入多语言与配置占位符，防止循环报错
+        window.localStorage.setItem('locale', 'en');
+    </script>
 </head>
 <body>
     <div id="app"></div>
-    <script>
-        // 第一性原理：为 Vue 引擎构建一个“零真空”执行环境
-        window.__BASE_URL__ = "./";
-        window.process = { env: { NODE_ENV: 'production' } };
-        // 关键：强制伪装成一个已就绪的全局配置对象，防止 undefined is not iterable 报错
-        window.config = { version: 'production', buildTime: Date.now() };
-        
-        const coreScripts = [
-            './assets/js/vendor-4ed993c7.js',
-            './assets/js/vue-vendor-4ed993c7.js',
-            './assets/js/index-72aaa7da.js'
-        ];
 
-        // 顺序阻塞式注入：确保依赖链条物理咬合
-        function inject(idx) {
-            if (idx >= coreScripts.length) return;
-            const s = document.createElement('script');
-            s.src = coreScripts[idx];
-            s.type = 'module';
-            s.onload = () => {
-                console.log(`Core ${idx} mounted.`);
-                inject(idx + 1);
-            };
-            document.head.appendChild(s);
-        }
-        inject(0);
+    <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
+    <script type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
+    <script type="module" src="./assets/js/index-72aaa7da.js"></script>
+
+    <script>
+        // 5. 紧急监视器：如果 3 秒后依然白屏，手动强制触发 resize 唤醒部分 Vue 组件
+        setTimeout(() => {
+            if (document.getElementById('app').innerHTML === "") {
+                console.warn("Engine stall detected, forcing wake-up...");
+                window.dispatchEvent(new Event('resize'));
+            }
+        }, 3000);
     </script>
 </body>
 </html>
