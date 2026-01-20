@@ -9,9 +9,25 @@
 </head>
 <body>
     <div id="app"></div>
-    <script>window.__BASE_URL__ = "./";</script>
-    <script type="module" src="./assets/js/vendor-4ed993c7.js"></script>
-    <script type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
-    <script type="module" src="./assets/js/index-72aaa7da.js"></script>
+    <script>
+        // 1. 物理环境锁定
+        window.__BASE_URL__ = "./";
+        window.process = { env: { NODE_ENV: 'production' } };
+
+        // 2. 强行拉回零件：既然模块化加载失败，我们手动按序注入
+        const coreScripts = [
+            './assets/js/vendor-4ed993c7.js',
+            './assets/js/vue-vendor-4ed993c7.js',
+            './assets/js/index-72aaa7da.js'
+        ];
+
+        coreScripts.forEach(src => {
+            const s = document.createElement('script');
+            s.src = src;
+            s.type = 'module';
+            s.async = false; // 保证按物理顺序咬合
+            document.head.appendChild(s);
+        });
+    </script>
 </body>
 </html>
