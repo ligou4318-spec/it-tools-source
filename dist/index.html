@@ -4,33 +4,51 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT-Tools</title>
+    <base href="./">
     <link rel="stylesheet" href="./assets/css/index-fd2d99c0.css">
     <script data-cfasync="false">
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: "production" } };
-        try { localStorage.setItem('it-tools-locale', 'en'); } catch(e) {}
     </script>
 </head>
 <body>
-    <div id="app" style="width:100%; min-height:100vh; display:block;"></div>
-
-    <script data-cfasync="false" type="module" src="./assets/js/vendor-4ed993c7.js"></script>
-    <script data-cfasync="false" type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
-    <script data-cfasync="false" type="module" src="./assets/js/index-72aaa7da.js"></script>
+    <div id="app" style="min-height: 100vh; width: 100%;"></div>
 
     <script data-cfasync="false">
-        window.onload = function() {
-            setTimeout(() => {
-                if (document.getElementById('app').children.length === 0) {
-                    console.error("Critical failure: Re-mounting...");
-                    // 强制触发一次浏览器重绘
-                    window.dispatchEvent(new Event('resize'));
-                    document.body.style.display = 'none';
-                    document.body.offsetHeight; // 触发 reflow
-                    document.body.style.display = 'block';
-                }
-            }, 1000);
-        };
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = src;
+                s.type = 'module'; // 你的代码是 Vite 编译的，必须带 module
+                s.onload = resolve;
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+
+        // 严格按物理依赖顺序点火
+        async function bootstrap() {
+            try {
+                console.log("Ignition sequence start...");
+                await loadScript('./assets/js/vendor-4ed993c7.js');
+                await loadScript('./assets/js/vue-vendor-4ed993c7.js');
+                await loadScript('./assets/js/index-72aaa7da.js');
+                console.log("All systems loaded. Forcing render...");
+                
+                // 暴力唤醒 Vue 挂载逻辑
+                window.dispatchEvent(new Event('load'));
+                setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
+            } catch (err) {
+                console.error("Ignition failed:", err);
+            }
+        }
+
+        // 确保 DOM 完全稳定后再启动
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootstrap);
+        } else {
+            bootstrap();
+        }
     </script>
 </body>
 </html>
