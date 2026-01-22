@@ -3,52 +3,43 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT-Tools</title>
-    <base href="./">
+    <title>IT-Tools | High Performance</title>
     <link rel="stylesheet" href="./assets/css/index-fd2d99c0.css">
-    <script data-cfasync="false">
+    <script>
+        // 1. 物理环境注入
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: "production" } };
+        try { localStorage.setItem('it-tools-locale', 'en'); } catch(e) {}
+
+        // 2. 暴力点火逻辑：通过 fetch 强行执行模块代码
+        async function forceIgnition() {
+            const scripts = [
+                './assets/js/vendor-4ed993c7.js',
+                './assets/js/vue-vendor-4ed993c7.js',
+                './assets/js/index-72aaa7da.js'
+            ];
+            
+            console.log("Starting Force Ignition Sequence...");
+            for (const src of scripts) {
+                try {
+                    const resp = await fetch(src);
+                    const code = await resp.text();
+                    const script = document.createElement('script');
+                    script.type = 'module';
+                    // 核心技巧：利用 Blob 逃避服务器 MIME 检查
+                    const blob = new Blob([code], { type: 'application/javascript' });
+                    script.src = URL.createObjectURL(blob);
+                    document.head.appendChild(script);
+                    await new Promise(r => setTimeout(r, 50)); // 给解析器喘息时间
+                } catch (e) {
+                    console.error(`Failed to ignite: ${src}`, e);
+                }
+            }
+        }
+        window.addEventListener('DOMContentLoaded', forceIgnition);
     </script>
 </head>
 <body>
-    <div id="app" style="min-height: 100vh; width: 100%;"></div>
-
-    <script data-cfasync="false">
-        function loadScript(src) {
-            return new Promise((resolve, reject) => {
-                const s = document.createElement('script');
-                s.src = src;
-                s.type = 'module'; // 你的代码是 Vite 编译的，必须带 module
-                s.onload = resolve;
-                s.onerror = reject;
-                document.head.appendChild(s);
-            });
-        }
-
-        // 严格按物理依赖顺序点火
-        async function bootstrap() {
-            try {
-                console.log("Ignition sequence start...");
-                await loadScript('./assets/js/vendor-4ed993c7.js');
-                await loadScript('./assets/js/vue-vendor-4ed993c7.js');
-                await loadScript('./assets/js/index-72aaa7da.js');
-                console.log("All systems loaded. Forcing render...");
-                
-                // 暴力唤醒 Vue 挂载逻辑
-                window.dispatchEvent(new Event('load'));
-                setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
-            } catch (err) {
-                console.error("Ignition failed:", err);
-            }
-        }
-
-        // 确保 DOM 完全稳定后再启动
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', bootstrap);
-        } else {
-            bootstrap();
-        }
-    </script>
+    <div id="app"></div>
 </body>
 </html>
