@@ -5,31 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT-Tools</title>
     <link rel="stylesheet" href="./assets/css/index-fd2d99c0.css">
-    <script>
+    <script data-cfasync="false">
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: "production" } };
-        // 强制写入初始化配置，防止 Vue 启动时因为找不到 Locale 崩溃
         try { localStorage.setItem('it-tools-locale', 'en'); } catch(e) {}
     </script>
 </head>
 <body>
-    <div id="app" style="min-height: 100vh;"></div>
+    <div id="app" style="width:100%; min-height:100vh; display:block;"></div>
 
-    <script src="./assets/js/vendor-4ed993c7.js"></script>
-    <script src="./assets/js/vue-vendor-4ed993c7.js"></script>
-    <script src="./assets/js/index-72aaa7da.js"></script>
+    <script data-cfasync="false" type="module" src="./assets/js/vendor-4ed993c7.js"></script>
+    <script data-cfasync="false" type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
+    <script data-cfasync="false" type="module" src="./assets/js/index-72aaa7da.js"></script>
 
-    <script>
-        // 4. 暴力唤醒：如果 Vue 没能自动挂载，强制触发全局 resize 激活渲染
+    <script data-cfasync="false">
         window.onload = function() {
             setTimeout(() => {
                 if (document.getElementById('app').children.length === 0) {
-                    console.log("Triggering hard reset...");
+                    console.error("Critical failure: Re-mounting...");
+                    // 强制触发一次浏览器重绘
                     window.dispatchEvent(new Event('resize'));
-                } else {
-                    console.log("System Ignited Successfully.");
+                    document.body.style.display = 'none';
+                    document.body.offsetHeight; // 触发 reflow
+                    document.body.style.display = 'block';
                 }
-            }, 500);
+            }, 1000);
         };
     </script>
 </body>
