@@ -2,35 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>IT-Tools | Global</title>
-    <base href="./">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT-Tools | High Performance</title>
     <link rel="stylesheet" href="./assets/css/index-fd2d99c0.css">
-    <script data-cfasync="false">
-        // 2. 环境强行对齐
+    <script>
         window.__BASE_URL__ = "./";
         window.process = { env: { NODE_ENV: "production" } };
-        // 3. 性能补丁：防止某些浏览器因不支持模块加载而静默退出
-        if (!HTMLScriptElement.supports || !HTMLScriptElement.supports('module')) {
-            console.error("Your browser is too old. Please use Chrome/Safari.");
-        }
+        try { localStorage.setItem('it-tools-locale', 'en'); } catch(e) {}
     </script>
 </head>
 <body>
     <div id="app"></div>
 
-    <script data-cfasync="false" type="module" src="./assets/js/vendor-4ed993c7.js"></script>
-    <script data-cfasync="false" type="module" src="./assets/js/vue-vendor-4ed993c7.js"></script>
-    <script data-cfasync="false" type="module" src="./assets/js/index-72aaa7da.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Ready. Starting Engine...");
+            
+            const scripts = [
+                './assets/js/vendor-4ed993c7.js',
+                './assets/js/vue-vendor-4ed993c7.js',
+                './assets/js/index-72aaa7da.js'
+            ];
 
-    <script data-cfasync="false">
-        // 5. 暴力唤醒：如果 Vue 挂载失败，强制触发事件
-        setTimeout(() => {
-            const app = document.getElementById('app');
-            if (app && app.innerHTML === "") {
-                console.warn("Manual ignition triggered...");
-                window.dispatchEvent(new Event('load'));
-            }
-        }, 1000);
+            scripts.forEach(src => {
+                const s = document.createElement('script');
+                s.type = 'module';
+                s.src = src;
+                s.async = false; // 强行锁定物理顺序
+                document.head.appendChild(s);
+            });
+        });
     </script>
 </body>
 </html>
